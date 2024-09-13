@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# ASCII Art for welcome message
+welcome_message() {
+    cat << "EOF"
+▄▄▄█████▓ ▄▄▄      ▓█████▄  ▄▄▄        ██████  ██░ ██  ██▓    ▄▄▄██▀▀▀▓█████  ██▓
+▓  ██▒ ▓▒▒████▄    ▒██▀ ██▌▒████▄    ▒██    ▒ ▓██░ ██▒▓██▒      ▒██   ▓█   ▀ ▓██▒
+▒ ▓██░ ▒░▒██  ▀█▄  ░██   █▌▒██  ▀█▄  ░ ▓██▄   ▒██▀▀██░▒██▒      ░██   ▒███   ▒██▒
+░ ▓██▓ ░ ░██▄▄▄▄██ ░▓█▄   ▌░██▄▄▄▄██   ▒   ██▒░▓█ ░██ ░██░   ▓██▄██▓  ▒▓█  ▄ ░██░
+  ▒██▒ ░  ▓█   ▓██▒░▒████▓  ▓█   ▓██▒▒██████▒▒░▓█▒░██▓░██░    ▓███▒   ░▒████▒░██░
+  ▒ ░░    ▒▒   ▓▒█░ ▒▒▓  ▒  ▒▒   ▓▒█░▒ ▒▓▒ ▒ ░ ▒ ░░▒░▒░▓      ▒▓▒▒░   ░░ ▒░ ░░▓  
+    ░      ▒   ▒▒ ░ ░ ▒  ▒   ▒   ▒▒ ░░ ░▒  ░ ░ ▒ ░▒░ ░ ▒ ░    ▒ ░▒░    ░ ░  ░ ▒ ░
+  ░        ░   ▒    ░ ░  ░   ░   ▒   ░  ░  ░   ░  ░░ ░ ▒ ░    ░ ░ ░      ░    ▒ ░
+               ░  ░   ░          ░  ░      ░   ░  ░  ░ ░      ░   ░      ░  ░ ░  
+                    ░                                                            
+EOF
+}
+
 # Cloudflare IPv4 addresses
 ipv4_addresses=(
     "173.245.48.0/20"
@@ -47,6 +63,10 @@ whitelist_ipv6() {
 
 # Function to save iptables rules
 save_iptables() {
+    if [ ! -d /etc/iptables ]; then
+        echo "Creating /etc/iptables directory..."
+        sudo mkdir -p /etc/iptables
+    fi
     sudo iptables-save > /etc/iptables/rules.v4
     sudo ip6tables-save > /etc/iptables/rules.v6
     echo "iptables rules saved."
@@ -54,11 +74,27 @@ save_iptables() {
 
 # Main function to run the script
 main() {
-    echo "Whitelisting Cloudflare IPs..."
-    whitelist_ipv4
-    whitelist_ipv6
-    save_iptables
-    echo "All Cloudflare IPs have been whitelisted."
+    welcome_message
+    echo "Choose an option:"
+    echo "1. Whitelist Cloudflare IPs"
+    echo "2. Exit"
+    read -p "Enter your choice [1/2]: " choice
+
+    case $choice in
+        1)
+            echo "Whitelisting Cloudflare IPs..."
+            whitelist_ipv4
+            whitelist_ipv6
+            save_iptables
+            echo "All Cloudflare IPs have been whitelisted."
+            ;;
+        2)
+            echo "Exiting script."
+            ;;
+        *)
+            echo "Invalid option. Exiting."
+            ;;
+    esac
 }
 
 # Run the main function
