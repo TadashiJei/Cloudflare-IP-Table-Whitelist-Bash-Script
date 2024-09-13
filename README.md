@@ -7,7 +7,6 @@ This script automatically whitelists Cloudflare's IP addresses in your server's 
 1. **Clone the Repository:**
    ```bash
    https://github.com/TadashiJei/Cloudflare-IP-Table-Whitelist-Bash-Script.git
-   cd cloudflare-iptables-whitelist
    ```
 
 2. **Make the Script Executable:**
